@@ -1,0 +1,6 @@
+@VT3CyberZone.Server_HostAddress = http://localhost:5121
+
+GET {{VT3CyberZone.Server_HostAddress}}/health
+Accept: application/json
+
+###

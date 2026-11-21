@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>V-T3 CyberZone | Đăng ký quán</title>
+  <style>
+    body{margin:0;background:#0b1020;color:#e8eef8;font:15px "Segoe UI",sans-serif}.brand-header{min-height:78px;padding:10px max(calc((100vw - 680px)/2),20px);border-bottom:1px solid #263752;display:flex;align-items:center}.brand-link{display:inline-flex;align-items:center;text-decoration:none;border-radius:6px;transition:opacity .18s ease,transform .18s ease}.brand-link:hover{opacity:.88;transform:translateY(-1px)}.brand-logo{display:block;height:56px;width:auto;max-width:min(180px,42vw);object-fit:contain;border-radius:6px}.wrap{max-width:680px;margin:40px auto;padding:20px}.card{background:#121c30;border:1px solid #263752;border-radius:14px;padding:24px;margin-bottom:18px}
+    h1{margin-top:0}label{display:grid;gap:6px;margin:12px 0;color:#aab8cd}input{padding:10px;border-radius:8px;border:1px solid #31435e;background:#0b1220;color:white}
+    button{background:#1788ff;color:white;border:0;border-radius:8px;padding:11px 14px;font-weight:600;cursor:pointer}button:disabled{opacity:.5}.hidden{display:none}.error{color:#ff8585}.success{color:#80e0a6}
+  </style>
+</head>
+<body>
+<header class="brand-header">
+  <a class="brand-link" href="/" aria-label="Về trang chủ V-T3 CyberZone">
+    <img class="brand-logo" src="/images/logo-vt3-cyberzone.jpg" alt="V-T3 CyberZone - Quản lý phòng net">
+  </a>
+</header>
+<main class="wrap">
+  <section class="card"><h1>Đăng ký quán CyberZone</h1><p>Đăng ký quán để chờ admin nền tảng duyệt. Sau khi được duyệt, chủ quán có thể tải bộ cài và đăng nhập desktop app.</p>
+    <form id="register">
+      <label>Tên quán<input name="shopName" maxlength="120" required></label>
+      <label>Họ tên chủ quán<input name="ownerName" maxlength="100" required></label>
+      <label>Tên đăng nhập quản lý<input name="username" maxlength="50" required></label>
+      <label>Email<input name="email" type="email" maxlength="255" required></label>
+      <label>Số điện thoại<input name="phone" maxlength="30"></label>
+      <label>Mật khẩu (ít nhất 8 ký tự)<input name="password" type="password" minlength="8" required></label>
+      <button>Gửi đăng ký</button>
+    </form><p id="registerMessage"></p>
+  </section>
+  <section class="card"><h2>Đăng nhập để tải app</h2>
+    <form id="login">
+      <label>Tên đăng nhập<input name="username" autocomplete="username" required></label>
+      <label>Mật khẩu<input name="password" type="password" autocomplete="current-password" required></label>
+      <button>Đăng nhập</button>
+    </form><p id="loginMessage"></p>
+    <button id="download" class="hidden" disabled>Tải app</button>
+  </section>
+</main>
+<script>
+const key="vt3-shop-token",registerMessage=document.querySelector("#registerMessage"),loginMessage=document.querySelector("#loginMessage"),download=document.querySelector("#download");
+async function request(path,options={}){const headers={"Content-Type":"application/json",...(options.headers||{})};const token=sessionStorage.getItem(key);if(token)headers.Authorization=`Bearer ${token}`;const response=await fetch(path,{...options,headers});const data=response.headers.get("content-type")?.includes("application/json")?await response.json():null;if(!response.ok)throw new Error(data?.message||`Lỗi HTTP ${response.status}`);return {response,data}}
+document.querySelector("#register").onsubmit=async e=>{e.preventDefault();registerMessage.className="";try{const form=Object.fromEntries(new FormData(e.currentTarget));const result=await request("/api/shops/register",{method:"POST",body:JSON.stringify(form)});registerMessage.className="success";registerMessage.textContent=result.data.message;e.currentTarget.reset()}catch(error){registerMessage.className="error";registerMessage.textContent=error.message}};
+document.querySelector("#login").onsubmit=async e=>{e.preventDefault();loginMessage.className="";try{const form=Object.fromEntries(new FormData(e.currentTarget));const result=await request("/api/shops/portal/login",{method:"POST",body:JSON.stringify(form)});sessionStorage.setItem(key,result.data.token);loginMessage.className="success";loginMessage.textContent=`Đã đăng nhập quán ${result.data.shop.name}.`;download.classList.remove("hidden");download.disabled=false}catch(error){loginMessage.className="error";loginMessage.textContent=error.message}};
+download.onclick=async()=>{download.disabled=true;try{const {response}=await request("/api/shops/portal/download");const blob=await response.blob();const url=URL.createObjectURL(blob);const disposition=response.headers.get("Content-Disposition")||"";const match=disposition.match(/filename\*=UTF-8''([^;]+)|filename="?([^";]+)"?/i);const filename=decodeURIComponent(match?.[1]||match?.[2]||"VT3CyberZone");const link=document.createElement("a");link.href=url;link.download=filename;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}catch(error){loginMessage.className="error";loginMessage.textContent=error.message}finally{download.disabled=false}};
+</script></body></html>

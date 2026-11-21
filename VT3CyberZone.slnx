@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/VT3CyberZone.Api/VT3CyberZone.Api.csproj" />
+    <Project Path="src/VT3CyberZone.Core/VT3CyberZone.Core.csproj" />
+    <Project Path="src/VT3CyberZone.Data/VT3CyberZone.Data.csproj" />
+    <Project Path="src/VT3CyberZone.Desktop/VT3CyberZone.Desktop.csproj" />
+    <Project Path="src/VT3CyberZone.Server/VT3CyberZone.Server.csproj" />
+  </Folder>
+</Solution>

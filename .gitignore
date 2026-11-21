@@ -1,0 +1,26 @@
+# ── .NET Build Output ─────────────────────────────────────────────────────────
+bin/
+obj/
+publish/
+*.user
+*.suo
+.vs/
+
+# ── Nuget ─────────────────────────────────────────────────────────────────────
+*.nupkg
+packages/
+project.lock.json
+
+# ── Logs & Temp ───────────────────────────────────────────────────────────────
+*.log
+*.tmp
+*.temp
+
+# ── Sensitive config (không up key/password lên GitHub) ───────────────────────
+appsettings.Production.json
+**/appsettings.Local.json
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
